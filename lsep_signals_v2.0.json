@@ -1,0 +1,372 @@
+{
+  "protocol": "LSEP",
+  "version": "2.0",
+  "description": "Luminae Signal Expression Protocol — Signal Definitions",
+  "license": "MIT",
+  "url": "https://lsep.org",
+  "states": {
+    "IDLE": {
+      "code": "00",
+      "priority": 0,
+      "ttc_threshold_s": null,
+      "description": "System dormant, no human detected",
+      "modalities": {
+        "light": {
+          "pattern": "breathing_pulse",
+          "frequency_hz": 0.3,
+          "intensity_range": [0.1, 0.3],
+          "bezier": [0.4, 0.0, 0.2, 1.0]
+        },
+        "sound": {
+          "type": "silence",
+          "frequency_hz": null,
+          "volume_db": 0,
+          "envelope": null
+        },
+        "motion": {
+          "action": "settled",
+          "speed_modifier": 0.0,
+          "trajectory": "none"
+        }
+      }
+    },
+    "AWARENESS": {
+      "code": "01",
+      "priority": 2,
+      "ttc_threshold_s": 10.0,
+      "description": "Human detected, passive observation",
+      "modalities": {
+        "light": {
+          "pattern": "brightening",
+          "frequency_hz": 0.5,
+          "intensity_range": [0.3, 0.6],
+          "bezier": [0.4, 0.0, 0.2, 1.0]
+        },
+        "sound": {
+          "type": "orientation_chime",
+          "frequency_hz": 440,
+          "volume_db": 40,
+          "envelope": "adsr",
+          "adsr": [0.02, 0.1, 0.5, 0.3]
+        },
+        "motion": {
+          "action": "orient",
+          "speed_modifier": 0.9,
+          "trajectory": "face_human"
+        }
+      }
+    },
+    "INTENT": {
+      "code": "02",
+      "priority": 5,
+      "ttc_threshold_s": 5.0,
+      "description": "Robot planning action near human",
+      "modalities": {
+        "light": {
+          "pattern": "steady_directional",
+          "frequency_hz": 0.0,
+          "intensity_range": [0.5, 0.7],
+          "bezier": [0.25, 0.1, 0.25, 1.0]
+        },
+        "sound": {
+          "type": "soft_hum",
+          "frequency_hz": 330,
+          "volume_db": 45,
+          "envelope": "sustained"
+        },
+        "motion": {
+          "action": "purposeful",
+          "speed_modifier": 0.8,
+          "trajectory": "planned_path"
+        }
+      }
+    },
+    "CARE": {
+      "code": "03",
+      "priority": 7,
+      "ttc_threshold_s": 3.0,
+      "description": "Active safety measures, proximity caution",
+      "modalities": {
+        "light": {
+          "pattern": "wave",
+          "frequency_hz": 1.5,
+          "intensity_range": [0.6, 0.9],
+          "bezier": [0.4, 0.0, 0.2, 1.0]
+        },
+        "sound": {
+          "type": "proximity_tone",
+          "frequency_hz": 660,
+          "volume_db": 55,
+          "envelope": "adsr",
+          "adsr": [0.01, 0.15, 0.6, 0.4]
+        },
+        "motion": {
+          "action": "decelerate",
+          "speed_modifier": 0.4,
+          "trajectory": "yield_path"
+        }
+      }
+    },
+    "CRITICAL": {
+      "code": "04",
+      "priority": 10,
+      "ttc_threshold_s": 1.5,
+      "description": "Immediate danger, emergency response",
+      "modalities": {
+        "light": {
+          "pattern": "fast_pulse",
+          "frequency_hz": 3.0,
+          "intensity_range": [0.8, 1.0],
+          "bezier": [0.0, 0.0, 1.0, 1.0]
+        },
+        "sound": {
+          "type": "warning_tone",
+          "frequency_hz": 880,
+          "volume_db": 75,
+          "envelope": "adsr",
+          "adsr": [0.005, 0.05, 0.8, 0.2]
+        },
+        "motion": {
+          "action": "stop_or_retreat",
+          "speed_modifier": 0.0,
+          "trajectory": "emergency_stop"
+        }
+      }
+    },
+    "THREAT": {
+      "code": "05",
+      "priority": 8,
+      "ttc_threshold_s": 0.5,
+      "description": "Imminent collision, maximum alert",
+      "modalities": {
+        "light": {
+          "pattern": "steady_max",
+          "frequency_hz": 0.0,
+          "intensity_range": [1.0, 1.0],
+          "bezier": [0.0, 0.0, 0.0, 1.0]
+        },
+        "sound": {
+          "type": "urgent_alarm",
+          "frequency_hz": 1100,
+          "volume_db": 85,
+          "envelope": "adsr",
+          "adsr": [0.001, 0.01, 1.0, 0.1]
+        },
+        "motion": {
+          "action": "full_stop_backup",
+          "speed_modifier": 0.0,
+          "trajectory": "emergency_retreat"
+        }
+      }
+    },
+    "MED_CONF": {
+      "code": "06",
+      "priority": 6,
+      "ttc_threshold_s": null,
+      "description": "Medium confidence in sensor data",
+      "modalities": {
+        "light": {
+          "pattern": "shimmer",
+          "frequency_hz": 2.0,
+          "intensity_range": [0.4, 0.7],
+          "bezier": [0.4, 0.0, 0.6, 1.0]
+        },
+        "sound": {
+          "type": "query_tone",
+          "frequency_hz": 550,
+          "volume_db": 50,
+          "envelope": "adsr",
+          "adsr": [0.02, 0.1, 0.4, 0.5]
+        },
+        "motion": {
+          "action": "cautious",
+          "speed_modifier": 0.5,
+          "trajectory": "reduced_speed"
+        }
+      }
+    },
+    "LOW_CONF": {
+      "code": "07",
+      "priority": 9,
+      "ttc_threshold_s": null,
+      "description": "Low confidence, degraded sensing",
+      "modalities": {
+        "light": {
+          "pattern": "blink",
+          "frequency_hz": 4.0,
+          "intensity_range": [0.3, 0.8],
+          "bezier": [0.0, 0.0, 1.0, 1.0]
+        },
+        "sound": {
+          "type": "error_chirp",
+          "frequency_hz": 770,
+          "volume_db": 60,
+          "envelope": "staccato"
+        },
+        "motion": {
+          "action": "minimal",
+          "speed_modifier": 0.1,
+          "trajectory": "frozen"
+        }
+      }
+    },
+    "INTEGRITY": {
+      "code": "08",
+      "priority": 9,
+      "ttc_threshold_s": null,
+      "description": "System self-check, diagnostic mode",
+      "modalities": {
+        "light": {
+          "pattern": "sequential_sweep",
+          "frequency_hz": 1.0,
+          "intensity_range": [0.5, 0.8],
+          "bezier": [0.25, 0.1, 0.25, 1.0]
+        },
+        "sound": {
+          "type": "diagnostic_tone",
+          "frequency_hz": 440,
+          "volume_db": 45,
+          "envelope": "pulse"
+        },
+        "motion": {
+          "action": "stationary",
+          "speed_modifier": 0.0,
+          "trajectory": "self_check"
+        }
+      }
+    }
+  },
+  "transition_rules": {
+    "ttc_formula": "TTC = distance_m / closing_velocity_ms",
+    "hysteresis_cooldown_s": 2.0,
+    "hysteresis_bypass_ttc_s": 0.5,
+    "proximity_floor_m": 1.5,
+    "proximity_minimum_state": "AWARENESS",
+    "escalation": "immediate",
+    "de_escalation": "sustained_readings_required"
+  },
+  "metadata": {
+    "author": "Experience Design Institute",
+    "location": "Zurich, Switzerland",
+    "created": "2026-02-25",
+    "spec_url": "https://github.com/NemanjaGalic/LSEP/blob/main/LSEP_SPECIFICATION_v2.0.md"
+  }
+}"THREAT": {
+      "code": "05",
+      "priority": 8,
+      "ttc_threshold_s": 0.5,
+      "description": "Imminent collision, maximum alert — hysteresis bypass",
+      "modalities": {
+        "light": {
+          "pattern": "steady_max",
+          "frequency_hz": 0.0,
+          "intensity_range": [1.0, 1.0],
+          "bezier": [0.0, 0.0, 0.0, 1.0]
+        },
+        "sound": {
+          "type": "urgent_alarm",
+          "frequency_hz": 1100,
+          "volume_db": 85,
+          "envelope": "adsr",
+          "adsr": [0.001, 0.01, 1.0, 0.1]
+        },
+        "motion": {
+          "action": "full_stop_backup",
+          "speed_modifier": 0.0,
+          "trajectory": "emergency_retreat"
+        }
+      }
+    },
+    "MED_CONF": {
+      "code": "06",
+      "priority": 6,
+      "ttc_threshold_s": null,
+      "description": "Medium confidence in sensor data",
+      "modalities": {
+        "light": {
+          "pattern": "shimmer",
+          "frequency_hz": 2.0,
+          "intensity_range": [0.4, 0.7],
+          "bezier": [0.4, 0.0, 0.6, 1.0]
+        },
+        "sound": {
+          "type": "query_tone",
+          "frequency_hz": 550,
+          "volume_db": 50,
+          "envelope": "adsr",
+          "adsr": [0.02, 0.1, 0.4, 0.5]
+        },
+        "motion": {
+          "action": "cautious",
+          "speed_modifier": 0.5,
+          "trajectory": "reduced_speed"
+        }
+      }
+    },
+    "LOW_CONF": {
+      "code": "07",
+      "priority": 9,
+      "ttc_threshold_s": null,
+      "description": "Low confidence, degraded sensing",
+      "modalities": {
+        "light": {
+          "pattern": "blink",
+          "frequency_hz": 4.0,
+          "intensity_range": [0.3, 0.8],
+          "bezier": [0.0, 0.0, 1.0, 1.0]
+        },
+        "sound": {
+          "type": "error_chirp",
+          "frequency_hz": 770,
+          "volume_db": 60,
+          "envelope": "staccato"
+        },
+        "motion": {
+          "action": "minimal",
+          "speed_modifier": 0.1,
+          "trajectory": "frozen"
+        }
+      }
+    },
+    "INTEGRITY": {
+      "code": "08",
+      "priority": 9,
+      "ttc_threshold_s": null,
+      "description": "System self-check, diagnostic mode",
+      "modalities": {
+        "light": {
+          "pattern": "sequential_sweep",
+          "frequency_hz": 1.0,
+          "intensity_range": [0.5, 0.8],
+          "bezier": [0.25, 0.1, 0.25, 1.0]
+        },
+        "sound": {
+          "type": "diagnostic_tone",
+          "frequency_hz": 440,
+          "volume_db": 45,
+          "envelope": "pulse"
+        },
+        "motion": {
+          "action": "stationary",
+          "speed_modifier": 0.0,
+          "trajectory": "self_check"
+        }
+      }
+    }
+  },
+  "transition_rules": {
+    "ttc_formula": "TTC = distance_m / closing_velocity_ms",
+    "hysteresis_cooldown_s": 2.0,
+    "hysteresis_bypass_ttc_s": 0.5,
+    "proximity_floor_m": 1.5,
+    "proximity_minimum_state": "AWARENESS",
+    "escalation": "immediate",
+    "de_escalation": "sustained_readings_required"
+  },
+  "metadata": {
+    "author": "Experience Design Institute",
+    "location": "Zurich, Switzerland",
+    "created": "2026-02-25",
+    "spec_url": "https://github.com/NemanjaGalic/LSEP/blob/main/LSEP_SPECIFICATION_v2.0.md"
+  }
+}
