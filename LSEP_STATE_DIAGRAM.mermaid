@@ -1,0 +1,64 @@
+stateDiagram-v2
+    direction TB
+
+    [*] --> IDLE
+
+    state "LSEP Core (Required)" as core {
+        IDLE --> AWARENESS : Proximity < 3.0m\nOR Sensor_Event
+
+        AWARENESS --> IDLE : Proximity > 3.0m\nAND No Event\n[Hysteresis 2.0s]
+        AWARENESS --> INTENT : Path_Intersect\nOR TTC < 5.0s
+
+        INTENT --> AWARENESS : No Path_Intersect\nAND TTC > 5.0s\n[Hysteresis 2.0s]
+        INTENT --> CARE : TTC < 3.0s\nOR Vulnerable Event
+
+        CARE --> INTENT : TTC > 3.0s\nAND No Vulnerable\n[Hysteresis 2.0s]
+        CARE --> CRITICAL : TTC < 0.5s\nOR HW_Interrupt\n⚡ BYPASS
+        CARE --> THREAT : Force > Threshold\n⚡ BYPASS
+
+        CRITICAL --> CARE : Hazard resolved\n[Hysteresis 2.0s]
+        CRITICAL --> IDLE : System clear\n🔑 Manual Reset
+
+        THREAT --> CARE : Threat subsided\n[Hysteresis 2.0s]
+        THREAT --> IDLE : System clear\n🔑 Manual Reset
+    }
+
+    state "LSEP Extended (Optional)" as extended {
+        MED_CONF --> AWARENESS : Confidence ≥ 0.8
+        LOW_CONF --> IDLE : Mechanical resolved\n🔑 Manual Reset
+        INTEGRITY --> IDLE : Auth restored\n🔑 Manual Reset
+    }
+
+    AWARENESS --> MED_CONF : Confidence < 0.8\n[Extended Only]
+
+    note right of IDLE
+        ⛔ Safety Margin Floor
+        Proximity < 1.5m → min AWARENESS
+        (IDLE blocked)
+    end note
+
+    note right of CRITICAL
+        ⚡ Hysteresis BYPASSED
+        🛡️ Guardrail: SelfPreserve
+        → AssistHuman (hardcoded)
+        Attack: 0ms (instant)
+    end note
+
+    note left of THREAT
+        🕯️ De-escalation Design
+        White glow, NOT siren
+        Robot = "candle"
+        Infrasound 18-22Hz
+    end note
+
+    note right of AWARENESS
+        🐾 Pet-Safe Audio
+        All states < 18kHz
+        Exception: CRITICAL (85dB)
+    end note
+
+    note left of CARE
+        🧘 Tai Chi Mode
+        Speed < 0.3 m/s
+        60bpm Heartbeat
+    end note
