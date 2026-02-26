@@ -21,10 +21,9 @@
 ### 1.2 Target Implementations
 This specification is designed for deployment on humanoid and mobile robotic platforms requiring transparent, non-discriminatory safety communication with human operators and bystanders.
 
-Target platforms:
-- Tesla Optimus platform and derivatives
-- Figure AI humanoid systems
-- Boston Dynamics mobility platforms
+Target platforms (aspirational compatibility, not endorsements):
+- Humanoid platforms (e.g., Tesla Optimus, Figure AI)
+- Mobile robotic platforms (e.g., Boston Dynamics)
 - Open-source robotics implementations (ROS 2 compatible)
 
 ### 1.3 Standards Alignment
@@ -42,7 +41,7 @@ The Luminae Signal Expression Protocol (LSEP) v2.0 defines a physics-based, non-
 
 LSEP v2.0 introduces refined Time-to-Collision (TTC) thresholds, enhanced hysteresis mechanisms to prevent signal flickering, and deterministic state transitions based exclusively on kinematic data. The protocol specifies three communication modalities (light, sound, motion) across nine distinct operational states, with formal definitions for each signal parameter and transition rule. All state escalation and de-escalation decisions are grounded in physics-based calculations independent of demographic data.
 
-This specification enables robots to communicate safety state with high fidelity while achieving trimodal redundancy—ensuring that even if one communication channel becomes unavailable (darkness, noise, occlusion), the remaining two channels maintain semantic clarity and safety meaning. The protocol has been validated across 18 months of field testing with senior engineering teams at three major robotics companies.
+This specification enables robots to communicate safety state with high fidelity while achieving trimodal redundancy—ensuring that even if one communication channel becomes unavailable (darkness, noise, occlusion), the remaining two channels maintain semantic clarity and safety meaning.
 
 ---
 
@@ -1061,22 +1060,18 @@ Per each state:
 
 ## 16. Authors & Attribution
 
-**LSEP v2.0** developed by the **Experience Design Institute**, Zurich, Switzerland, with robotics engineering teams at Tesla Optimus, Figure AI, and Boston Dynamics.
+**LSEP v2.0** developed by **Nemanja Galić** at the **Experience Design Institute**, Zurich, Switzerland.
 
 ### 16.1 Institution
 
 **Experience Design Institute**
-Swiss Federal Institute of Technology (ETHZ)
 Zurich, Switzerland
-Website: experience-design.ethz.ch
-Contact: lsep@experience-design.ethz.ch
+**Website:** https://lsep.org
+**Contact:** nemanja@experiencedesigninstitute.ch
 
-### 16.2 Contributing Organizations
+### 16.2 Acknowledgments
 
-- **Tesla Optimus:** Humanoid platform integration
-- **Figure AI:** Humanoid feedback and validation
-- **Boston Dynamics:** Mobile platform integration
-- **Swiss Standards Committee:** Regulatory guidance
+This specification was developed with reference to published standards and publicly available robotics safety research. Target platform compatibility listed in Section 1.2 is aspirational and does not imply endorsement by any manufacturer.
 
 ### 16.3 Citation
 
@@ -1100,9 +1095,9 @@ Full license: https://creativecommons.org/licenses/by/4.0/
 
 ### 16.5 Contact
 
-Email: lsep@experience-design.ethz.ch
-Website: https://experience-design.ethz.ch/protocols/lsep
-Issues: https://github.com/experience-design-institute/lsep-specification
+Email: nemanja@experiencedesigninstitute.ch
+Website: https://lsep.org
+Issues: https://github.com/NemanjaGalic/LSEP/issues
 
 ---
 
@@ -1113,6 +1108,6 @@ Version: 2.0
 Last Updated: February 25, 2026
 Status: Technical Review
 
-This specification has undergone technical review for accuracy, regulatory compliance, and safety requirements by senior engineering representatives from Tesla Optimus, Figure AI, and Boston Dynamics. Complete implementation guidance and testing protocols provided for LSEP-compliant systems.
+This specification is published for technical review. Contributions and feedback are welcome via GitHub Issues. Complete implementation guidance and testing protocols provided for LSEP-compliant systems.
 
-Latest version: https://experience-design.ethz.ch/protocols/lsep-v2.0
+Latest version: https://github.com/NemanjaGalic/LSEP/blob/main/LSEP_SPECIFICATION_v2.0.md
