@@ -4,7 +4,7 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-v2.0-blue.svg)](https://github.com/NemanjaGalic/LSEP/releases)
-[![Website](https://img.shields.io/badge/Website-lsep.org-brightgreen.svg)](https://lsep.org)
+[![Website](https://img.shields.io/badge/Website-experiencedesigninstitute.ch-brightgreen.svg)](https://www.experiencedesigninstitute.ch)
 
 **9 states. 3 modalities. 1 grammar. Physics-based. EU AI Act ready. No demographic profiling.**
 
@@ -213,7 +213,7 @@ def update_state():
 
 ## Links
 
-- **[Website](https://lsep.org)** — Overview and use cases
+- **[Website](https://www.experiencedesigninstitute.ch)** — Overview and use cases
 - **[Specification](./LSEP_SPECIFICATION_v2.0.md)** — Full technical documentation
 - **[Signal Schema](./lsep_signals_v2.0.json)** — JSON signal definitions
 - **[State Diagram](./LSEP_STATE_DIAGRAM.mermaid)** — State transition flows
