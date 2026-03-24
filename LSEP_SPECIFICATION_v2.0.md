@@ -1066,7 +1066,7 @@ Per each state:
 
 **Experience Design Institute**
 Zurich, Switzerland
-**Website:** https://lsep.org
+**Website:** https://www.experiencedesigninstitute.ch
 **Contact:** nemanja@experiencedesigninstitute.ch
 
 ### 16.2 Acknowledgments
@@ -1078,7 +1078,7 @@ This specification was developed with reference to published standards and publi
 **APA:**
 ```
 Experience Design Institute. (2026). LSEP v2.0: Luminae Signal Expression
-Protocol formal technical specification. ETHZ, Zurich, Switzerland.
+Protocol formal technical specification. Experience Design Institute, Zurich, Switzerland.
 ```
 
 ### 16.4 License
@@ -1096,7 +1096,7 @@ Full license: https://creativecommons.org/licenses/by/4.0/
 ### 16.5 Contact
 
 Email: nemanja@experiencedesigninstitute.ch
-Website: https://lsep.org
+Website: https://www.experiencedesigninstitute.ch
 Issues: https://github.com/NemanjaGalic/LSEP/issues
 
 ---
