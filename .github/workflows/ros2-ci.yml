@@ -1,0 +1,66 @@
+name: ROS 2 Build & Test
+
+on:
+  push:
+    branches: [main, 'feat/**']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-test-smoke:
+    runs-on: ubuntu-latest
+    container:
+      image: ros:jazzy
+    defaults:
+      run:
+        working-directory: ros2
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tooling
+        run: |
+          apt-get update -qq
+          apt-get install -y python3-colcon-common-extensions python3-pytest >/dev/null
+
+      - name: rosdep
+        run: |
+          rosdep update 2>/dev/null || (rosdep init && rosdep update)
+          rosdep install --from-paths src --ignore-src -y || true
+
+      - name: colcon build
+        run: |
+          . /opt/ros/jazzy/setup.sh
+          colcon build --packages-select lsep_msgs lsep_ros2
+
+      - name: Unit tests (9/9 expected)
+        run: |
+          . /opt/ros/jazzy/setup.sh
+          . install/setup.sh
+          python3 -m pytest src/lsep_ros2/test/test_engine.py -v
+
+      - name: Headless smoke test (ordered ladder + dwell de-escalation + INTEGRITY)
+        run: |
+          . /opt/ros/jazzy/setup.sh
+          . install/setup.sh
+          ros2 launch lsep_ros2 lsep_demo.launch.py > /tmp/launch.log 2>&1 &
+          # Subscribe early and capture the full ORDERED sequence (one sim cycle ~27 s:
+          # approach -> THREAT -> retreat -> de-escalation). Ordered output is what
+          # proves THREAT -> (dwell) -> AWARENESS; sort -u alone cannot.
+          timeout 40 ros2 topic echo /lsep/signal --field state_name > /tmp/states.log 2>/dev/null &
+          sleep 42
+          echo "=== STATE LADDER (ordered, consecutive duplicates collapsed) ==="
+          uniq /tmp/states.log
+          echo "=== UNIQUE STATES OBSERVED ==="
+          sort -u /tmp/states.log
+          echo "=== INTEGRITY self-check (boot broadcast, from node log) ==="
+          grep -a INTEGRITY /tmp/launch.log || echo "(no INTEGRITY line in launch log)"
+          echo "=== LAUNCH LOG TAIL ==="
+          tail -n 15 /tmp/launch.log
+          # Gate 1: ladder reached THREAT
+          grep -qa THREAT /tmp/states.log || { echo "FAIL: THREAT never observed"; exit 1; }
+          # Gate 2: dwell de-escalation — an AWARENESS reading appears AFTER a THREAT reading
+          awk '/THREAT/{t=1} t && /AWARENESS/{ok=1} END{exit !ok}' /tmp/states.log \
+            || { echo "FAIL: no AWARENESS after THREAT (de-escalation not observed)"; exit 1; }
+          # Gate 3: INTEGRITY self-check happened at boot
+          grep -qa INTEGRITY /tmp/launch.log || { echo "FAIL: INTEGRITY self-check missing"; exit 1; }
+          echo "PASS: ordered ladder + dwell de-escalation + INTEGRITY verified"
