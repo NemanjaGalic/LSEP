@@ -195,6 +195,16 @@ LSEP/
 
 ---
 
+## ROS 2 Reference Implementation
+
+A buildable reference implementation lives in [`ros2/src/`](ros2/src/):
+typed messages (`lsep_msgs`), a managed lifecycle node implementing the
+v2.1-draft engine (time-aware hysteresis + input watchdog), a simulated
+human, and unit tests. CI builds it in `ros:jazzy` on every push. See
+[`ros2/src/README.md`](ros2/src/README.md) for the 5-minute quick start.
+
+---
+
 ## Quick Start
 
 ```python
