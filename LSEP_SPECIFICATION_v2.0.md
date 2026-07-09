@@ -1,9 +1,9 @@
 # LSEP v2.0 Specification Document
 ## Luminae Signal Expression Protocol — Formal Technical Specification
 
-**Version:** 2.0
-**Release Date:** February 25, 2026
-**Status:** Technical Review
+**Version:** 2.1-rc1 (Candidate)
+**Release Date:** February 25, 2026 (v2.0) — Candidate revision July 9, 2026
+**Status:** Technical Review — v2.1 Release Candidate
 **Classification:** Open Standards
 
 ---
@@ -12,9 +12,9 @@
 
 ### 1.1 Protocol Identification
 - **Name:** Luminae Signal Expression Protocol (LSEP)
-- **Version:** 2.0
-- **Previous Version:** 1.5 (August 2025)
-- **Release Date:** February 25, 2026
+- **Version:** 2.1-rc1 (Candidate)
+- **Previous Version:** 2.0 (February 25, 2026); 1.5 (August 2025)
+- **Release Date:** February 25, 2026 (v2.0) — Candidate revision July 9, 2026
 - **Document Type:** Formal Technical Specification
 - **Intended Audience:** Senior engineering teams (autonomous robotics platforms)
 
@@ -32,6 +32,9 @@ Target platforms (aspirational compatibility, not endorsements):
 - EU Machinery Regulation 2023/1230
 - ISO/IEC 22380 (Safety-related artificial intelligence)
 - ANSI/RIA R15.06 (Collaborative robot safety)
+- WCAG 2.2, SC 2.3.1 "Three Flashes or Below Threshold" (photosensitivity; conservative adaptation — see Section 6.5.5) *(added v2.1-rc1, ADR-003)*
+- ISO 9241-391:2016 (Reduction of photosensitive seizures) *(added v2.1-rc1, ADR-003)*
+- ITU-R BT.1702-3 (11/2023) (Reduction of photosensitive epileptic seizures) *(added v2.1-rc1, ADR-003)*
 
 ---
 
@@ -318,12 +321,15 @@ All three carry equal semantic weight and function as a complete redundancy syst
 
 #### 6.5.1 Light Signal
 
-- **Pattern:** Fast red pulse
-- **Frequency:** 3.0 Hz (0.33 second cycle)
+- **Pattern:** Asymmetric double pulse ("pulse–pulse–pause")
+- **Timing:** 100 ms on / 150 ms off / 100 ms on / 650 ms off — period 1.0 s = **2 flashes per second**
 - **Intensity:** 0.70–1.0
 - **Color:** Bright red RGB(255, 0, 0)
-- **Waveform:** Rectangular (50% duty cycle)
+- **Waveform:** Rectangular pulses within the double-pulse pattern above
 - **Transition:** Emergency curve (instantaneous)
+- **Photosensitivity:** Complies with the protocol-wide flash cap — see Section 6.5.5 (normative)
+
+*Change note (v2.1-rc1, 2026-07-09, ADR-003): v2.0 defined a 3.0 Hz rectangular strobe (50% duty cycle) — replaced by the asymmetric double pulse. 2 flashes/s keeps a 33% margin below the WCAG 2.2 SC 2.3.1 three-flash limit; the asymmetric pattern preserves urgency and stays temporally distinct from the CARE pulse (1.5 Hz, Section 6.4.1). Sound signal (880 Hz, 85 dB) unchanged.*
 
 #### 6.5.2 Sound Signal
 
@@ -344,6 +350,17 @@ All three carry equal semantic weight and function as a complete redundancy syst
 
 - **Immediate escalation:** No hysteresis required
 - **Bypass to THREAT:** If TTC drops below 0.5s, escalate directly to THREAT
+
+#### 6.5.5 Photosensitivity Safety (Normative)
+
+*Added 2026-07-09 (v2.1-rc1) per ADR-003.*
+
+1. **Protocol-wide flash cap:** No LSEP light signal that exceeds the WCAG "general flash" threshold may produce more than **2 flashes per second**. For rectangular/on-off patterns this means a hard frequency cap of **2.0 Hz**.
+2. **Scope (normative):** This cap binds the ENTIRE protocol — all nine defined states AND any future Extended States, including third-party implementations. Medical safety limits are not optional (Lead Architect decision, 2026-07-09).
+3. **Flash definitions (by reference):** "General flash" and "red flash" as defined in WCAG 2.2 SC 2.3.1 — a pair of opposing changes in relative luminance of 10% or more of the maximum relative luminance where the relative luminance of the darker state is below 0.80; red flash: any pair of opposing transitions involving a saturated red.
+4. **Conformance test rule:** The reference implementation MUST include a flash-rate lint: no light signal above the general-flash threshold may produce more than 2 flashes per second, including under timing jitter.
+5. **Sources:** WCAG 2.2 SC 2.3.1 (Three Flashes or Below Threshold); ISO 9241-391:2016; ITU-R BT.1702-3 (11/2023).
+6. **Marked assumption:** These thresholds are defined for screen/broadcast content. LSEP adopts them as a conservative adaptation for physical robot lights and claims no conformance within those standards' scopes. Photometric verification (specification "intensity" vs. relative luminance) on reference hardware is pending.
 
 ---
 
@@ -400,6 +417,7 @@ All three carry equal semantic weight and function as a complete redundancy syst
 - **Color:** Cyan RGB(0, 255, 255)
 - **Waveform:** Sinusoidal shimmer
 - **Formula:** Intensity(t) = 0.50 + 0.10 × sin(2π × 4.0 × t)
+- **Photosensitivity constraint (v2.1-rc1, normative — Section 6.5.5):** As specified above (4.0 Hz, 20% luminance modulation, darker state below 0.80), this signal exceeds the general-flash threshold and MUST be revised for v2.1 final: either reduce modulation depth below 10% of maximum relative luminance (preferred — preserves the shimmer character) or reduce frequency to ≤ 2.0 Hz. Exact revised parameter values: **OPEN** (ADR-003 names 0.50 ± 0.04 only as an example, not a normative value).
 
 #### 7.1.2 Sound Signal
 
@@ -427,11 +445,13 @@ All three carry equal semantic weight and function as a complete redundancy syst
 #### 7.2.1 Light Signal
 
 - **Pattern:** Blinking
-- **Frequency:** 5.0 Hz
+- **Frequency:** 2.0 Hz
 - **Intensity:** 0.0–0.80
 - **Color:** Yellow RGB(255, 255, 0)
 - **Waveform:** Rectangular
-- **Formula:** Intensity(t) = 0.40 + 0.40 × square_wave(5.0 × t)
+- **Formula:** Intensity(t) = 0.40 + 0.40 × square_wave(2.0 × t)
+
+*Change note (v2.1-rc1, 2026-07-09, ADR-003): v2.0 defined 5.0 Hz — reduced to 2.0 Hz to comply with Section 6.5.5 (blink character preserved).*
 
 #### 7.2.2 Sound Signal
 
@@ -525,6 +545,37 @@ where:
 | 0.5 ≤ TTC < 1.5 | CRITICAL | High-risk proximity |
 | TTC < 0.5 | THREAT | Imminent collision |
 
+#### 8.2.1 Platform Risk Class (`platform_risk_class`) — v2.1 Candidate
+
+*Added 2026-07-09 (v2.1-rc1) per ADR-003 (GitHub Issue #1).*
+
+**Definition:** Optional field `platform_risk_class` (enum `PRC_1`–`PRC_4`) classifying the platform by its **maximum kinetic energy capability** (capability, not momentary value — deterministic and certifiable at design time):
+
+```
+E_max = 0.5 × m × v_max²
+
+where:
+  m     = total platform mass incl. maximum payload (kg)
+  v_max = maximum platform velocity (m/s)
+```
+
+| Class | E_max | TTC Multiplier k | Example (illustrative) |
+|---|---|---|---|
+| PRC_1 | ≤ 10 J | 1.0 (baseline, default) | 3 kg vacuum robot, ≤ 2.5 m/s (≈ 9 J) |
+| PRC_2 | 10–100 J | 1.5 | 30 kg service robot, ≤ 2.5 m/s (≈ 94 J) |
+| PRC_3 | 100–1,000 J | 2.0 | 150 kg platform, ≤ 3.5 m/s (≈ 919 J) |
+| PRC_4 | > 1,000 J | 3.0 | 500 kg platform, ≥ 2.0 m/s (≥ 1,000 J) |
+
+**Effect:** `TTC_effective(State) = TTC_base(State) × k` for the **escalation** thresholds of CARE and CRITICAL (optionally AWARENESS/INTENT). Example (SSOT constants): a PRC_3 platform escalates to CRITICAL at TTC < 3.0 s instead of < 1.5 s.
+
+**Backward compatibility:** The field is optional; **default = PRC_1 (k = 1.0)** — existing v2.0 implementations remain valid unchanged.
+
+**THREAT bypass does NOT scale:** The 0.5 s bypass threshold (Section 8.4) is identical for all PRC classes (Lead Architect decision 2026-07-09: 0.5 s marks the physical point of no return — a universal rigid anchor, independent of platform mass).
+
+**Anti-bias constraint:** k depends EXCLUSIVELY on mass and maximum velocity. No demographic, personal, or situation-classifying parameters (see Section 12).
+
+**Marked as discussion basis:** The class boundaries 10 / 100 / 1,000 J are engineering judgment without a normative source and are explicitly a **discussion basis** for a community RFC. Classification by kinetic energy (not momentum) is definitive (Lead Architect decision 2026-07-09: injury severity scales quadratically with velocity).
+
 ### 8.3 Hysteresis Rules
 
 #### 8.3.1 Escalation
@@ -564,6 +615,8 @@ Example: INTENT state, TTC suddenly drops to 0.4s
   → Red light, 1100 Hz alarm, emergency stop activate instantly
   → No hysteresis delay; maximum signal amplitude immediately
 ```
+
+**v2.1-rc1 note (2026-07-09, ADR-003):** The 0.5 s bypass threshold does **NOT** scale with `platform_risk_class` (Section 8.2.1); it is a universal rigid anchor for all PRC classes.
 
 ### 8.5 Escalation Protocol
 
@@ -1034,6 +1087,7 @@ Per each state:
 | 1.0 | Jan 2024 | Deprecated | Initial; 6 core states |
 | 1.5 | Aug 2025 | Deprecated | Extended states; refined TTC |
 | 2.0 | Feb 2026 | Current | Formal spec; regulatory mapping; non-discrimination |
+| 2.1-rc1 | Jul 2026 | Candidate | TTC SSOT errata; photosensitivity cap + CRITICAL double pulse (ADR-003); `platform_risk_class` |
 
 ### 15.2 Backward Compatibility
 
@@ -1060,6 +1114,7 @@ Per each state:
 ### 15.4 Errata & Change Log
 
 - **2026-07-09:** TTC thresholds consolidated to Terminology Dictionary SSOT (errata); THREAT semantics confirmed as TTC-based collision state (CEO decision, Option 1).
+- **2026-07-09 (v2.1-rc1, ADR-003):** CRITICAL light signal changed from 3.0 Hz rectangular strobe to asymmetric double pulse (100/150/100/650 ms, period 1.0 s = 2 flashes/s); new normative subsection 6.5.5 "Photosensitivity Safety" (protocol-wide ≤ 2 flashes/s cap, normative incl. third-party Extended States); LOW_CONF blink 5.0 Hz → 2.0 Hz; MED_CONF flagged for revision (exact parameters OPEN); optional `platform_risk_class` introduced (Section 8.2.1, PRC boundaries marked as discussion basis); standards alignment extended (WCAG 2.2 SC 2.3.1, ISO 9241-391:2016, ITU-R BT.1702-3); version raised to 2.1-rc1 (Candidate). Approved by CEO 2026-07-09.
 
 ---
 
@@ -1109,9 +1164,9 @@ Issues: https://github.com/NemanjaGalic/LSEP/issues
 ## End of Document
 
 **LSEP v2.0 Specification Document**
-Version: 2.0
-Last Updated: February 25, 2026
-Status: Technical Review
+Version: 2.1-rc1 (Candidate)
+Last Updated: July 9, 2026
+Status: Technical Review — v2.1 Release Candidate
 
 This specification is published for technical review. Contributions and feedback are welcome via GitHub Issues. Complete implementation guidance and testing protocols provided for LSEP-compliant systems.
 
