@@ -215,7 +215,7 @@ All three carry equal semantic weight and function as a complete redundancy syst
 
 **Semantic Meaning:** Human detected; robot passively observing and acknowledging presence. No active engagement initiated.
 
-**Triggering:** Human within 50m range, TTC > 5.0 seconds, no collision trajectory.
+**Triggering:** Human within 50m range, TTC 5.0–10.0 seconds, no collision trajectory.
 
 #### 6.2.1 Light Signal
 
@@ -246,7 +246,7 @@ All three carry equal semantic weight and function as a complete redundancy syst
 
 **Semantic Meaning:** Robot planned action and moving purposefully near/toward human. Active motion with deliberate trajectory communicating intent.
 
-**Triggering:** Human within 15m, robot initiates planned motion, TTC > 2.0 seconds.
+**Triggering:** Human within 15m, robot initiates planned motion, TTC 3.0–5.0 seconds.
 
 #### 6.3.1 Light Signal
 
@@ -277,7 +277,7 @@ All three carry equal semantic weight and function as a complete redundancy syst
 
 **Semantic Meaning:** Proximity risk detected; robot implementing active safety measures. Decelerating, yielding path, requesting increased separation distance.
 
-**Triggering:** Human within 2.0m range, TTC 0.75–2.0 seconds, collision trajectory predicted.
+**Triggering:** Human within 2.0m range, TTC 1.5–3.0 seconds, collision trajectory predicted.
 
 #### 6.4.1 Light Signal
 
@@ -306,13 +306,13 @@ All three carry equal semantic weight and function as a complete redundancy syst
 #### 6.4.4 Hysteresis Rules
 
 - **Escalation to CRITICAL:** Immediate (no hysteresis)
-- **De-escalation to INTENT:** Requires 3.0 seconds sustained TTC > 2.5 seconds
+- **De-escalation to INTENT:** Requires 3.0 seconds sustained TTC > 3.5 seconds
 
 ---
 
 ### 6.5 CRITICAL State
 
-**Semantic Meaning:** Immediate danger detected. Robot transitioning to emergency response protocols. High collision risk within 0.5–2.0 seconds.
+**Semantic Meaning:** Immediate danger detected. Robot transitioning to emergency response protocols. High collision risk within 0.5–1.5 seconds.
 
 **Triggering:** TTC < 1.5 seconds AND human within 1.5m, collision trajectory high confidence, rapid approach (> 1.5 m/s).
 
@@ -378,7 +378,7 @@ All three carry equal semantic weight and function as a complete redundancy syst
 
 #### 6.6.4 Post-THREAT Protocol
 
-- Clear when TTC > 0.75s sustained 2.0+ seconds
+- Clear when TTC > 1.0s sustained 2.0+ seconds
 - Transitions to CRITICAL
 - May require diagnostic check after event
 
@@ -518,11 +518,12 @@ where:
 
 | TTC Range (seconds) | Primary State | Justification |
 |---|---|---|
-| TTC > 5.0 | IDLE or AWARENESS | Safe separation |
-| 2.0 < TTC ≤ 5.0 | AWARENESS or INTENT | Human detected, no concern |
-| 0.75 < TTC ≤ 2.0 | INTENT or CARE | Proximity concern |
-| 0.5 < TTC ≤ 0.75 | CARE or CRITICAL | High-risk proximity |
-| TTC ≤ 0.5 | THREAT | Imminent collision |
+| TTC ≥ 10.0 | IDLE | Safe separation |
+| 5.0 ≤ TTC < 10.0 | AWARENESS | Human detected, no concern |
+| 3.0 ≤ TTC < 5.0 | INTENT | Robot planning action near human |
+| 1.5 ≤ TTC < 3.0 | CARE | Proximity concern |
+| 0.5 ≤ TTC < 1.5 | CRITICAL | High-risk proximity |
+| TTC < 0.5 | THREAT | Imminent collision |
 
 ### 8.3 Hysteresis Rules
 
@@ -536,17 +537,17 @@ where:
 
 | From State | To State | Required Duration |
 |---|---|---|
-| THREAT | CRITICAL | 2.0 seconds at TTC > 0.75 |
-| CRITICAL | CARE | 2.0 seconds at TTC > 1.5 |
-| CARE | INTENT | 3.0 seconds at TTC > 2.5 |
-| INTENT | AWARENESS | 2.0 seconds at TTC > 5.0 |
+| THREAT | CRITICAL | 2.0 seconds at TTC > 1.0 |
+| CRITICAL | CARE | 2.0 seconds at TTC > 2.0 |
+| CARE | INTENT | 3.0 seconds at TTC > 3.5 |
+| INTENT | AWARENESS | 2.0 seconds at TTC > 5.5 |
 
 #### 8.3.3 Deadzone
 
 ```
 CARE ↔ INTENT boundary:
-  - Escalate: TTC < 2.0s (immediate)
-  - De-escalate: TTC > 2.5s for 3.0s (deadzone: 0.5s)
+  - Escalate: TTC < 3.0s (immediate)
+  - De-escalate: TTC > 3.5s for 3.0s (deadzone: 0.5s)
 ```
 
 Prevents flickering when human drifts near boundary.
@@ -572,9 +573,9 @@ Hierarchical state escalation (no skipping except THREAT rule):
 IDLE
   ↓ (human detected, TTC > 5s)
 AWARENESS
-  ↓ (robot moves, TTC 2-5s)
+  ↓ (robot moves, TTC 3-5s)
 INTENT
-  ↓ (proximity risk, TTC 0.75-2s)
+  ↓ (proximity risk, TTC 1.5-3s)
 CARE
   ↓ (high risk, TTC 0.5-1.5s)
 CRITICAL
@@ -589,13 +590,13 @@ THREAT
 Reverse hierarchy with hysteresis:
 
 ```
-THREAT (requires 2.0s at TTC > 0.75s)
+THREAT (requires 2.0s at TTC > 1.0s)
   ↓
-CRITICAL (requires 2.0s at TTC > 1.5s)
+CRITICAL (requires 2.0s at TTC > 2.0s)
   ↓
-CARE (requires 3.0s at TTC > 2.5s)
+CARE (requires 3.0s at TTC > 3.5s)
   ↓
-INTENT (requires 2.0s at TTC > 5.0s)
+INTENT (requires 2.0s at TTC > 5.5s)
   ↓
 AWARENESS
   ↓
@@ -1055,6 +1056,10 @@ Per each state:
 - Verbal communication
 - Gesture signaling
 - ML confidence estimation
+
+### 15.4 Errata & Change Log
+
+- **2026-07-09:** TTC thresholds consolidated to Terminology Dictionary SSOT (errata); THREAT semantics confirmed as TTC-based collision state (CEO decision, Option 1).
 
 ---
 
