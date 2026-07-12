@@ -413,11 +413,13 @@ All three carry equal semantic weight and function as a complete redundancy syst
 
 - **Pattern:** Shimmer
 - **Frequency:** 4.0 Hz
-- **Intensity:** 0.40–0.60
+- **Intensity:** 0.46–0.54
 - **Color:** Cyan RGB(0, 255, 255)
 - **Waveform:** Sinusoidal shimmer
-- **Formula:** Intensity(t) = 0.50 + 0.10 × sin(2π × 4.0 × t)
-- **Photosensitivity constraint (v2.1-rc1, normative — Section 6.5.5):** As specified above (4.0 Hz, 20% luminance modulation, darker state below 0.80), this signal exceeds the general-flash threshold and MUST be revised for v2.1 final: either reduce modulation depth below 10% of maximum relative luminance (preferred — preserves the shimmer character) or reduce frequency to ≤ 2.0 Hz. Exact revised parameter values: **OPEN** (ADR-003 names 0.50 ± 0.04 only as an example, not a normative value).
+- **Formula:** Intensity(t) = 0.50 + 0.04 × sin(2π × 4.0 × t)
+- **Photosensitivity (v2.1-rc1, normative — Section 6.5.5):** Sub-threshold modulation. The peak-to-peak modulation depth is 0.08 — 8% of maximum relative luminance, below the 10% general-flash threshold defined in Section 6.5.5 (point 3). The signal therefore does not constitute a flash under WCAG 2.2 SC 2.3.1, and the protocol-wide 2-flashes/s cap (Section 6.5.5, point 1) is not applicable; the 4.0 Hz shimmer frequency is retained. Marked assumption per Section 6.5.5 (point 6): specification intensity is treated as a conservative proxy for relative luminance; photometric verification on reference hardware is pending.
+
+*Change note (v2.1-rc1 update, 2026-07-12, ADR-003): v2.0 defined Intensity 0.40–0.60 with Formula Intensity(t) = 0.50 + 0.10 × sin(2π × 4.0 × t) — a 20% luminance modulation exceeding the general-flash threshold. The initial v2.1-rc1 draft (2026-07-09) flagged the revised parameters as OPEN. Decision 2026-07-12: modulation depth reduced to 0.50 ± 0.04 (the option ADR-003 §2.1 A2 marks as preferred — preserves the shimmer character); frequency unchanged at 4.0 Hz. Closes GitHub issue #8 (MED_CONF parameter portion).*
 
 #### 7.1.2 Sound Signal
 
@@ -1115,6 +1117,7 @@ Per each state:
 
 - **2026-07-09:** TTC thresholds consolidated to Terminology Dictionary SSOT (errata); THREAT semantics confirmed as TTC-based collision state (CEO decision, Option 1).
 - **2026-07-09 (v2.1-rc1, ADR-003):** CRITICAL light signal changed from 3.0 Hz rectangular strobe to asymmetric double pulse (100/150/100/650 ms, period 1.0 s = 2 flashes/s); new normative subsection 6.5.5 "Photosensitivity Safety" (protocol-wide ≤ 2 flashes/s cap, normative incl. third-party Extended States); LOW_CONF blink 5.0 Hz → 2.0 Hz; MED_CONF flagged for revision (exact parameters OPEN); optional `platform_risk_class` introduced (Section 8.2.1, PRC boundaries marked as discussion basis); standards alignment extended (WCAG 2.2 SC 2.3.1, ISO 9241-391:2016, ITU-R BT.1702-3); version raised to 2.1-rc1 (Candidate). Approved by CEO 2026-07-09.
+- **2026-07-12 (v2.1-rc1, ADR-003, issue #8):** MED_CONF light signal parameters decided — closes the OPEN marker from 2026-07-09: shimmer retained at 4.0 Hz, intensity 0.46–0.54, formula Intensity(t) = 0.50 + 0.04 × sin(2π × 4.0 × t). The 8% peak-to-peak modulation depth is below the 10% general-flash threshold, so the Section 6.5.5 flash cap does not apply (sub-threshold; preferred option per ADR-003 §2.1 A2). Machine-readable signal definitions updated accordingly: `lsep_signals` JSON raised to 2.1-rc1 with a pattern object for the CRITICAL double pulse (on/off sequence 100/150/100/650 ms, `frequency_hz` kept as cap-compliant effective flash rate for legacy consumers) and the optional top-level `platform_risk_class` block (Section 8.2.1).
 
 ---
 
