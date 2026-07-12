@@ -1,6 +1,6 @@
 {
   "protocol": "LSEP",
-  "version": "2.0",
+  "version": "2.1-rc1",
   "description": "Luminae Signal Expression Protocol — Signal Definitions",
   "license": "MIT",
   "url": "https://lsep.org",
@@ -114,8 +114,14 @@
       "description": "Immediate danger, emergency response",
       "modalities": {
         "light": {
-          "pattern": "fast_pulse",
-          "frequency_hz": 3.0,
+          "pattern": {
+            "type": "on_off_sequence",
+            "sequence_ms": [100, 150, 100, 650],
+            "period_ms": 1000,
+            "flashes_per_second": 2.0
+          },
+          "frequency_hz": 2.0,
+          "_frequency_hz_note": "effective flash rate; legacy consumers reading only frequency_hz get a cap-compliant value; authoritative timing is in pattern",
           "intensity_range": [0.8, 1.0],
           "bezier": [0.0, 0.0, 1.0, 1.0]
         },
@@ -167,8 +173,9 @@
       "modalities": {
         "light": {
           "pattern": "shimmer",
-          "frequency_hz": 2.0,
-          "intensity_range": [0.4, 0.7],
+          "frequency_hz": 4.0,
+          "intensity_range": [0.46, 0.54],
+          "_photosensitivity_note": "sub-threshold modulation (8% < 10% general-flash threshold); conservative adaptation, photometric verification on hardware pending",
           "bezier": [0.4, 0.0, 0.6, 1.0]
         },
         "sound": {
@@ -193,7 +200,7 @@
       "modalities": {
         "light": {
           "pattern": "blink",
-          "frequency_hz": 4.0,
+          "frequency_hz": 2.0,
           "intensity_range": [0.3, 0.8],
           "bezier": [0.0, 0.0, 1.0, 1.0]
         },
@@ -245,10 +252,27 @@
     "escalation": "immediate",
     "de_escalation": "sustained_readings_required"
   },
+  "platform_risk_class": {
+    "description": "Optional platform classification by maximum kinetic energy capability; scales TTC escalation thresholds. Spec section 8.2.1 (v2.1 candidate, ADR-003).",
+    "formula": "E_max = 0.5 * m * v_max^2 (m = total platform mass incl. maximum payload [kg]; v_max = maximum platform velocity [m/s])",
+    "effect": "TTC_effective(state) = TTC_base(state) * k",
+    "classes": {
+      "PRC_1": { "e_max_j_min": null, "e_max_j_max": 10, "k": 1.0 },
+      "PRC_2": { "e_max_j_min": 10, "e_max_j_max": 100, "k": 1.5 },
+      "PRC_3": { "e_max_j_min": 100, "e_max_j_max": 1000, "k": 2.0 },
+      "PRC_4": { "e_max_j_min": 1000, "e_max_j_max": null, "k": 3.0 }
+    },
+    "_boundary_note": "upper bounds inclusive per spec section 8.2.1 (PRC_1: E_max <= 10 J); null = unbounded",
+    "default": "PRC_1",
+    "applies_to": ["CARE", "CRITICAL"],
+    "threat_bypass_scales": false,
+    "boundaries_status": "discussion basis - RFC in issue #1"
+  },
   "metadata": {
     "author": "Experience Design Institute",
     "location": "Zurich, Switzerland",
     "created": "2026-02-25",
-    "spec_url": "https://github.com/NemanjaGalic/LSEP/blob/main/LSEP_SPECIFICATION_v2.0.md"
+    "spec_url": "https://github.com/NemanjaGalic/LSEP/blob/main/LSEP_SPECIFICATION_v2.0.md",
+    "_filename_note": "file will be renamed at v2.1 final; name kept for link stability during rc"
   }
 }
