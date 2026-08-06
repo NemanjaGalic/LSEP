@@ -3,10 +3,14 @@
 > The open standard for human-robot communication.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-v2.0-blue.svg)](https://github.com/NemanjaGalic/LSEP/releases)
+[![Version](https://img.shields.io/badge/Version-v2.1--rc1-blue.svg)](https://github.com/NemanjaGalic/LSEP/releases)
 [![Website](https://img.shields.io/badge/Website-experiencedesigninstitute.ch-brightgreen.svg)](https://www.experiencedesigninstitute.ch)
 
 **9 states. 3 modalities. 1 grammar. Physics-based. EU AI Act ready. No demographic profiling.**
+
+> **Current status:** v2.1-rc1 release candidate. v2.0 (February 25, 2026) is the last frozen release.
+
+> **Version authority:** `lsep_signals_v2.0.json` is the machine-readable authority for signal definitions; `LSEP_SPECIFICATION_v2.0.md` is the normative protocol document. Their filenames are retained for link stability during the release-candidate period.
 
 ---
 
@@ -41,7 +45,7 @@ State determination is driven by **Time-to-Collision (TTC)** calculations—obje
 
 ---
 
-## Core States (v2.0)
+## Core States (v2.1-rc1)
 
 | State | TTC Threshold | Meaning | Human Experience |
 |-------|---------------|---------|------------------|
@@ -54,7 +58,7 @@ State determination is driven by **Time-to-Collision (TTC)** calculations—obje
 
 ---
 
-## Extended States (v2.0)
+## Extended States (v2.1-rc1)
 
 | State | Purpose | Trigger |
 |-------|---------|---------| 
@@ -76,7 +80,7 @@ This metric is **independent of demographics**. A child, an elderly person, and 
 
 ```python
 class SafetyDecisionEngine:
-    """LSEP v2.0 — Physics-based state determination"""
+    """LSEP v2.1-rc1 — Physics-based state determination"""
 
     THRESHOLDS = {
         'THREAT':    0.5,   # seconds — hysteresis bypass
@@ -115,14 +119,14 @@ class SafetyDecisionEngine:
 
 ---
 
-## JSON Signal Format (v2.0)
+## JSON Signal Format (v2.1-rc1)
 
 **No hex color codes.** The protocol defines *semantics*, not *aesthetics*.
 
 ```json
 {
   "protocol": "LSEP",
-  "version": "2.0",
+  "version": "2.1-rc1",
   "state": "CARE",
   "ttc_seconds": 2.8,
   "distance_m": 3.2,
@@ -199,7 +203,7 @@ LSEP/
 
 A buildable reference implementation lives in [`ros2/src/`](ros2/src/):
 typed messages (`lsep_msgs`), a managed lifecycle node implementing the
-v2.1-draft engine (time-aware hysteresis + input watchdog), a simulated
+v2.1-rc1 engine (time-aware hysteresis + input watchdog), a simulated
 human, and unit tests. CI builds it in `ros:jazzy` on every push. See
 [`ros2/src/README.md`](ros2/src/README.md) for the 5-minute quick start.
 
@@ -227,7 +231,7 @@ def update_state():
 - **[Specification](./LSEP_SPECIFICATION_v2.0.md)** — Full technical documentation
 - **[Signal Schema](./lsep_signals_v2.0.json)** — JSON signal definitions
 - **[State Diagram](./LSEP_STATE_DIAGRAM.mermaid)** — State transition flows
-- **[Reference Implementation](./examples/safety_decision_engine.py)** — Python code
+- **[Legacy Python Example](./examples/safety_decision_engine.py)** — v2.0 reference code
 
 ---
 
@@ -238,7 +242,7 @@ def update_state():
   title={LSEP: Luminae Signal Expression Protocol},
   author={Galic, Nemanja},
   year={2026},
-  note={Open protocol specification, v2.0},
+  note={Open protocol specification, v2.1-rc1},
   url={https://github.com/NemanjaGalic/LSEP}
 }
 ```
@@ -263,6 +267,6 @@ LSEP is an open protocol. We welcome implementation feedback, safety validation 
 
 *Experience Design Institute — Zurich, Switzerland*
 
-*LSEP v2.0 — Physics-based. Transparent. Equal safety for all.*
+*LSEP v2.1-rc1 — Physics-based. Transparent. Equal safety for all.*
 
 </div>

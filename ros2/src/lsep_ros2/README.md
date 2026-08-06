@@ -1,7 +1,7 @@
 # lsep_ros2 — LSEP Reference Implementation for ROS 2
 
 > Managed lifecycle node implementing the **Luminae Signal Expression
-> Protocol (LSEP) v2.1-draft**. Physics-based (TTC) state machine,
+> Protocol (LSEP) v2.1-rc1**. Physics-based (TTC) state machine,
 > time-aware hysteresis, trimodal signal output, RViz visualization,
 > simulated demo. No Gazebo required for the first run.
 
@@ -103,7 +103,7 @@ needs for orchestrated bring-up.
 * **0.2.0** — typed transport via `lsep_msgs/Signal` on `lsep/signal`
   (state enum + `state_name`, NaN for undefined physics). JSON-in-String
   on `lsep/state` kept as deprecated mirror behind `publish_json`.
-* **0.1.0** — initial lifecycle node, v2.1 engine (dwell de-escalation +
+* **0.1.0** — initial lifecycle node, v2.1-rc1 engine (dwell de-escalation +
   input watchdog), simulated human, RViz marker, 9 unit tests.
 
 ## Roadmap

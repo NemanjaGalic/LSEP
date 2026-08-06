@@ -1,10 +1,10 @@
-# LSEP v2.1-draft — full protocol signal (typed transport).
+# LSEP v2.1-rc1 — full protocol signal (typed transport).
 # Replaces the JSON-in-String transport of lsep_ros2 v0.1.
 
 std_msgs/Header header
 
 string protocol                 # "LSEP"
-string version                  # "2.1-draft"
+string version                  # "2.1-rc1"
 
 # ---- state enum -------------------------------------------------------
 uint8 STATE_IDLE=0
