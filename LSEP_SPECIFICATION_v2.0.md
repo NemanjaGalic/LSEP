@@ -1,10 +1,12 @@
-# LSEP v2.0 Specification Document
+# LSEP v2.1-rc1 Specification Document
 ## Luminae Signal Expression Protocol — Formal Technical Specification
 
 **Version:** 2.1-rc1 (Candidate)
 **Release Date:** February 25, 2026 (v2.0) — Candidate revision July 9, 2026
 **Status:** Technical Review — v2.1 Release Candidate
 **Classification:** Open Standards
+
+> The filename retains `v2.0` for link stability during the release-candidate period. The normative version of this document is v2.1-rc1.
 
 ---
 
@@ -40,9 +42,9 @@ Target platforms (aspirational compatibility, not endorsements):
 
 ## 2. Abstract
 
-The Luminae Signal Expression Protocol (LSEP) v2.0 defines a physics-based, non-discriminatory trimodal communication system for autonomous robots to express internal state, safety awareness, and intention through simultaneous light, sound, and motion signals. This protocol ensures transparent human-robot interaction while maintaining full compliance with EU AI Act non-discrimination requirements.
+The Luminae Signal Expression Protocol (LSEP) v2.1-rc1 defines a physics-based, non-discriminatory trimodal communication system for autonomous robots to express internal state, safety awareness, and intention through simultaneous light, sound, and motion signals. This protocol ensures transparent human-robot interaction while maintaining full compliance with EU AI Act non-discrimination requirements.
 
-LSEP v2.0 introduces refined Time-to-Collision (TTC) thresholds, enhanced hysteresis mechanisms to prevent signal flickering, and deterministic state transitions based exclusively on kinematic data. The protocol specifies three communication modalities (light, sound, motion) across nine distinct operational states, with formal definitions for each signal parameter and transition rule. All state escalation and de-escalation decisions are grounded in physics-based calculations independent of demographic data.
+LSEP v2.1-rc1 introduces refined Time-to-Collision (TTC) thresholds, enhanced hysteresis mechanisms to prevent signal flickering, and deterministic state transitions based exclusively on kinematic data. The protocol specifies three communication modalities (light, sound, motion) across nine distinct operational states, with formal definitions for each signal parameter and transition rule. All state escalation and de-escalation decisions are grounded in physics-based calculations independent of demographic data.
 
 This specification enables robots to communicate safety state with high fidelity while achieving trimodal redundancy—ensuring that even if one communication channel becomes unavailable (darkness, noise, occlusion), the remaining two channels maintain semantic clarity and safety meaning.
 
@@ -126,7 +128,7 @@ This specification enables robots to communicate safety state with high fidelity
 
 ### 5.1 Overview
 
-LSEP v2.0 is a trimodal state machine that maps internal robot state to synchronized signals across three independent communication channels:
+LSEP v2.1-rc1 is a trimodal state machine that maps internal robot state to synchronized signals across three independent communication channels:
 
 1. **Light Modality:** Visual signals via LED arrays, displays, or dedicated light sources
 2. **Sound Modality:** Acoustic signals via speakers or piezoelectric transducers
@@ -139,7 +141,7 @@ The protocol defines nine operational states organized into two tiers:
 ### 5.2 State Hierarchy
 
 ```
-LSEP STATE MACHINE (v2.0)
+LSEP STATE MACHINE (v2.1-rc1)
 │
 ├─ CORE SAFETY STATES (6)
 │  ├─ IDLE (System dormant, no human detected)
@@ -1123,7 +1125,7 @@ Per each state:
 
 ## 16. Authors & Attribution
 
-**LSEP v2.0** developed by **Nemanja Galić** at the **Experience Design Institute**, Zurich, Switzerland.
+**LSEP v2.1-rc1** developed by **Nemanja Galić** at the **Experience Design Institute**, Zurich, Switzerland.
 
 ### 16.1 Institution
 
@@ -1140,7 +1142,7 @@ This specification was developed with reference to published standards and publi
 
 **APA:**
 ```
-Experience Design Institute. (2026). LSEP v2.0: Luminae Signal Expression
+Experience Design Institute. (2026). LSEP v2.1-rc1: Luminae Signal Expression
 Protocol formal technical specification. Experience Design Institute, Zurich, Switzerland.
 ```
 
@@ -1166,7 +1168,7 @@ Issues: https://github.com/NemanjaGalic/LSEP/issues
 
 ## End of Document
 
-**LSEP v2.0 Specification Document**
+**LSEP v2.1-rc1 Specification Document**
 Version: 2.1-rc1 (Candidate)
 Last Updated: July 9, 2026
 Status: Technical Review — v2.1 Release Candidate

@@ -1,4 +1,4 @@
-"""LSEP v2.1-draft — Safety Decision Engine.
+"""LSEP v2.1-rc1 — Safety Decision Engine.
 
 Changes vs. v2.0 (addresses Issue #1):
   * Time-based de-escalation: a less-severe state must remain stable for
@@ -15,6 +15,8 @@ a reference rendering, manufacturers may restyle within the semantic bounds.
 """
 
 import time
+
+PROTOCOL_VERSION = '2.1-rc1'
 
 # Most severe first. Lower index == more severe.
 CORE_SEVERITY = ['THREAT', 'CRITICAL', 'CARE', 'INTENT', 'AWARENESS', 'IDLE']
@@ -155,7 +157,7 @@ class SafetyDecisionEngine:
         ttc = self._last.get('ttc')
         return {
             'protocol': 'LSEP',
-            'version': '2.1-draft',
+            'version': PROTOCOL_VERSION,
             'state': st,
             'core_state': self._state,
             'ttc_seconds': round(ttc, 3) if ttc is not None else None,
@@ -172,7 +174,7 @@ class SafetyDecisionEngine:
         """Signal for a fixed state (e.g. INTEGRITY during boot self-check)."""
         return {
             'protocol': 'LSEP',
-            'version': '2.1-draft',
+            'version': PROTOCOL_VERSION,
             'state': state,
             'core_state': state,
             'ttc_seconds': None,

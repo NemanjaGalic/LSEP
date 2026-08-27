@@ -5,7 +5,7 @@ Two packages, drop both into your workspace `src/`:
 ```
 src/
 ├── lsep_msgs/    # typed interfaces (Signal + 3 modalities) — build first
-└── lsep_ros2/    # lifecycle node, v2.1 engine, simulated demo, tests
+└── lsep_ros2/    # lifecycle node, v2.1-rc1 engine, simulated demo, tests
 ```
 
 ```bash

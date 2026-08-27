@@ -1,4 +1,4 @@
-"""Unit tests for SafetyDecisionEngine v2.1 (time-aware hysteresis).
+"""Unit tests for SafetyDecisionEngine v2.1-rc1 (time-aware hysteresis).
 
 Run without ROS:  python3 -m pytest test/test_engine.py -v
 """
@@ -112,4 +112,5 @@ def test_signal_schema_contains_required_fields():
                 'confidence', 'sensor_fusion'):
         assert key in sig
     assert sig['protocol'] == 'LSEP'
+    assert sig['version'] == '2.1-rc1'
     assert set(sig['modalities']) == {'light', 'sound', 'motion'}

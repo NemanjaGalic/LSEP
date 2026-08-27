@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check protocol version consistency
+        run: python3 ../tools/check_version_consistency.py
+
       - name: Install build tooling
         run: |
           apt-get update -qq

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LSEP v2.0 — SafetyDecisionEngine Reference Implementation
+LSEP v2.0 (legacy) — SafetyDecisionEngine Reference Implementation
 
 Physics-based state determination using Time-to-Collision (TTC).
 Every human triggers identical safety logic. No demographic classification.
