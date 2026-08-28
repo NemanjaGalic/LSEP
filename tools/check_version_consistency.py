@@ -9,7 +9,6 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "2.1-rc1"
 
 
 def read(relative_path: str) -> str:
@@ -24,30 +23,32 @@ def require(text: str, pattern: str, label: str) -> None:
 def main() -> None:
     catalog_path = ROOT / "lsep_signals_v2.0.json"
     catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
-    if catalog.get("version") != EXPECTED_VERSION:
-        raise SystemExit(
-            f"version check failed: catalog version is {catalog.get('version')!r}"
-        )
+    expected_version = catalog.get("version")
+    if not expected_version:
+        raise SystemExit("version check failed: catalog version is missing")
+        
+    badge_ver = expected_version.replace("-", "--").replace(".", r"\.")
+    rgx_ver = expected_version.replace(".", r"\.")
 
     require(
         read("README.md"),
-        r"Version-v2\.1--rc1-blue\.svg",
+        rf"Version-v{badge_ver}-blue\.svg",
         "README badge",
     )
-    require(read("README.md"), r'"version": "2\.1-rc1"', "README JSON example")
+    require(read("README.md"), rf'"version": "{rgx_ver}"', "README JSON example")
     require(
         read("LSEP_SPECIFICATION_v2.0.md"),
-        r"\*\*Version:\*\* 2\.1-rc1 \(Candidate\)",
+        rf"\*\*Version:\*\* {rgx_ver} \(Candidate\)",
         "specification version",
     )
     require(
         read("ros2/src/lsep_ros2/lsep_ros2/engine.py"),
-        r"PROTOCOL_VERSION = ['\"]2\.1-rc1['\"]",
+        rf"PROTOCOL_VERSION = ['\"]{rgx_ver}['\"]",
         "ROS 2 engine version",
     )
     require(
         read("ros2/src/lsep_msgs/msg/Signal.msg"),
-        r'^string version\s+# "2\.1-rc1"',
+        rf'^string version\s+# "{rgx_ver}"',
         "ROS message version",
     )
 
@@ -57,13 +58,15 @@ def main() -> None:
         "ros2/src/lsep_msgs/msg/Signal.msg",
         "ros2/src/README.md",
         "ros2/src/lsep_ros2/README.md",
+        "README.md",
+        "LSEP_SPECIFICATION_v2.0.md",
     ):
         if "v2.1-draft" in read(relative_path):
             stale.append(relative_path)
     if stale:
         raise SystemExit("version check failed: stale v2.1-draft labels in " + ", ".join(stale))
 
-    print(f"version consistency: PASS ({EXPECTED_VERSION})")
+    print(f"version consistency: PASS ({expected_version})")
 
 
 if __name__ == "__main__":
