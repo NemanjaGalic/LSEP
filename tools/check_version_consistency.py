@@ -26,9 +26,9 @@ def main() -> None:
     expected_version = catalog.get("version")
     if not expected_version:
         raise SystemExit("version check failed: catalog version is missing")
-        
-    badge_ver = expected_version.replace("-", "--").replace(".", r"\.")
-    rgx_ver = expected_version.replace(".", r"\.")
+
+    badge_ver = re.escape(expected_version.replace("-", "--"))
+    rgx_ver = re.escape(expected_version)
 
     require(
         read("README.md"),
