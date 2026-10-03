@@ -104,7 +104,7 @@ needs for orchestrated bring-up.
   (state enum + `state_name`, NaN for undefined physics). JSON-in-String
   on `lsep/state` kept as deprecated mirror behind `publish_json`.
 * **0.1.0** — initial lifecycle node, v2.1-rc1 engine (dwell de-escalation +
-  input watchdog), simulated human, RViz marker, 9 unit tests.
+  input watchdog), simulated human, RViz marker, 13 unit tests.
 
 ## Roadmap
 

@@ -3,7 +3,13 @@
 Run without ROS:  python3 -m pytest test/test_engine.py -v
 """
 
-from lsep_ros2.engine import SafetyDecisionEngine
+import py_compile
+from pathlib import Path
+
+import pytest
+
+from lsep_ros2.engine import (CRITICAL_SEQUENCE_MS, MAX_FLASHES_PER_SECOND,
+                              SIGNALS, SafetyDecisionEngine)
 
 
 class FakeClock:
@@ -114,3 +120,44 @@ def test_signal_schema_contains_required_fields():
     assert sig['protocol'] == 'LSEP'
     assert sig['version'] == '2.1-rc1'
     assert set(sig['modalities']) == {'light', 'sound', 'motion'}
+
+
+def test_no_light_signal_exceeds_flash_cap():
+    # Spec 6.5.5: at most 2 flashes per second, for every state (issue #15).
+    for state, mods in SIGNALS.items():
+        hz = mods['light']['frequency_hz']
+        assert hz <= MAX_FLASHES_PER_SECOND, f'{state}: {hz} Hz'
+
+
+def test_critical_is_double_pulse_and_threat_is_steady():
+    crit = SIGNALS['CRITICAL']['light']
+    assert crit['pattern'] == 'double_pulse'
+    assert crit['sequence_ms'] == [100, 150, 100, 650]
+    on_phases = len(CRITICAL_SEQUENCE_MS[0::2])
+    period_s = sum(CRITICAL_SEQUENCE_MS) / 1000.0
+    assert on_phases / period_s == crit['frequency_hz'] == 2.0
+
+    threat = SIGNALS['THREAT']['light']
+    assert threat['pattern'] == 'steady_max'
+    assert threat['frequency_hz'] == 0.0
+
+
+def test_published_signal_respects_flash_cap_in_every_core_state():
+    # Dynamic sibling of the table check: what the node would publish.
+    for d in (12.0, 8.0, 4.0, 2.8, 1.0, 0.3):
+        eng, _ = make_engine()
+        eng.update(d, 1.0)
+        light = eng.signal()['modalities']['light']
+        assert light['frequency_hz'] <= MAX_FLASHES_PER_SECOND
+
+
+def test_legacy_example_compiles():
+    example = None
+    for parent in Path(__file__).resolve().parents:
+        candidate = parent / 'examples' / 'safety_decision_engine.py'
+        if candidate.is_file():
+            example = candidate
+            break
+    if example is None:
+        pytest.skip('examples/ not present in this checkout layout')
+    py_compile.compile(str(example), doraise=True)

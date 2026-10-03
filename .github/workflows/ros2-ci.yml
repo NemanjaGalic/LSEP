@@ -35,7 +35,7 @@ jobs:
           . /opt/ros/jazzy/setup.sh
           colcon build --packages-select lsep_msgs lsep_ros2
 
-      - name: Unit tests (9/9 expected)
+      - name: Unit tests (13/13 expected)
         run: |
           . /opt/ros/jazzy/setup.sh
           . install/setup.sh
