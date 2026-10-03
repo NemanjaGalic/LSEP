@@ -8,8 +8,8 @@ Publishes:
   lsep/signal  (lsep_msgs/Signal)        typed LSEP signal  <-- primary
   lsep/state   (std_msgs/String)         JSON mirror, deprecated
                                          (disable: publish_json:=false)
-  lsep/marker  (visualization_msgs/Marker) RViz sphere, color = state,
-                                           alpha pulses at the light
+  lsep/marker  (visualization_msgs/Marker) RViz sphere, color per spec
+                                           9.1, alpha pulses at the light
                                            modality's frequency
 
 Lifecycle: unconfigured -> configure (INTEGRITY self-check) -> activate
@@ -29,6 +29,7 @@ from visualization_msgs.msg import Marker
 from lsep_msgs.msg import (LightModality, MotionModality, Signal,
                            SoundModality)
 
+from .colors import marker_color
 from .engine import SafetyDecisionEngine
 
 # Map engine state names -> lsep_msgs/Signal enum values.
@@ -47,18 +48,6 @@ STATE_IDS = {
 
 def _nan_if_none(value):
     return float(value) if value is not None else float('nan')
-
-STATE_COLORS = {
-    'IDLE':      (0.60, 0.60, 0.60),
-    'AWARENESS': (0.20, 0.50, 1.00),
-    'INTENT':    (1.00, 0.90, 0.20),
-    'CARE':      (1.00, 0.60, 0.10),
-    'CRITICAL':  (1.00, 0.15, 0.10),
-    'THREAT':    (1.00, 0.00, 0.60),
-    'MED_CONF':  (0.40, 0.90, 0.90),
-    'LOW_CONF':  (0.80, 0.50, 0.90),
-    'INTEGRITY': (1.00, 1.00, 1.00),
-}
 
 
 class LSEPLifecycleNode(Node):
@@ -232,7 +221,7 @@ class LSEPLifecycleNode(Node):
 
     def _marker_for(self, signal: dict, now: float) -> Marker:
         st = signal['state']
-        r, g, b = STATE_COLORS.get(st, (1.0, 1.0, 1.0))
+        r, g, b = marker_color(st, now)
         freq = signal['modalities']['light'].get('frequency_hz', 0.0) or 0.0
         # Pulse alpha at the light modality's frequency (semantics -> render).
         alpha = 1.0 if freq <= 0 else 0.35 + 0.65 * abs(math.sin(math.pi * freq * now))

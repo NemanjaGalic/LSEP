@@ -53,13 +53,15 @@ INTEGRITY → IDLE → AWARENESS → INTENT → CARE → CRITICAL → THREAT
 ### RViz
 
 Add a `Marker` display on topic `/lsep/marker` (fixed frame `map`).
-The sphere's color encodes the state; its alpha pulses at the light
-modality's `frequency_hz` — semantics rendered, not hardcoded aesthetics.
+The sphere's color follows the spec's color table (Section 9.1); its alpha
+pulses at the light modality's `frequency_hz`. Colors are not unique per
+state: AWARENESS and INTENT are both white, CRITICAL and THREAT both red.
+Read the state name from `/lsep/signal`, not from the color.
 
 ### Unit tests (no ROS required)
 
 ```bash
-python3 -m pytest test/test_engine.py -v   # 9 tests, all green
+python3 -m pytest test -v   # 17 tests, all green
 ```
 
 ## Interface
@@ -104,7 +106,7 @@ needs for orchestrated bring-up.
   (state enum + `state_name`, NaN for undefined physics). JSON-in-String
   on `lsep/state` kept as deprecated mirror behind `publish_json`.
 * **0.1.0** — initial lifecycle node, v2.1-rc1 engine (dwell de-escalation +
-  input watchdog), simulated human, RViz marker, 13 unit tests.
+  input watchdog), simulated human, RViz marker, 17 unit tests.
 
 ## Roadmap
 
