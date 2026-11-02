@@ -9,6 +9,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+VERSION_PATTERN = re.compile(
+    r"\d+\.\d+(?:\.\d+)?(?:-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?"
+)
 
 
 def read(relative_path: str) -> str:
@@ -20,12 +23,26 @@ def require(text: str, pattern: str, label: str) -> None:
         raise SystemExit(f"version check failed: {label}")
 
 
+def catalog_version(catalog: object) -> str:
+    if not isinstance(catalog, dict):
+        raise SystemExit("version check failed: catalog root must be a JSON object")
+    if "version" not in catalog:
+        raise SystemExit("version check failed: catalog version is missing")
+
+    version = catalog["version"]
+    if not isinstance(version, str):
+        raise SystemExit("version check failed: catalog version must be a string")
+    if not version:
+        raise SystemExit("version check failed: catalog version is empty")
+    if not VERSION_PATTERN.fullmatch(version):
+        raise SystemExit(f"version check failed: malformed catalog version {version!r}")
+    return version
+
+
 def main() -> None:
     catalog_path = ROOT / "lsep_signals_v2.0.json"
     catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
-    expected_version = catalog.get("version")
-    if not expected_version:
-        raise SystemExit("version check failed: catalog version is missing")
+    expected_version = catalog_version(catalog)
 
     badge_ver = re.escape(expected_version.replace("-", "--"))
     rgx_ver = re.escape(expected_version)
@@ -38,7 +55,7 @@ def main() -> None:
     require(read("README.md"), rf'"version": "{rgx_ver}"', "README JSON example")
     require(
         read("LSEP_SPECIFICATION_v2.0.md"),
-        rf"\*\*Version:\*\* {rgx_ver} \(Candidate\)",
+        rf"^\*\*Version:\*\*\s+{rgx_ver}(?:\s+\([^\r\n)]+\))?\s*$",
         "specification version",
     )
     require(
