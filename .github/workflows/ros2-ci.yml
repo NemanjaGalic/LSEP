@@ -35,11 +35,11 @@ jobs:
           . /opt/ros/jazzy/setup.sh
           colcon build --packages-select lsep_msgs lsep_ros2
 
-      - name: Unit tests (9/9 expected)
+      - name: Unit tests (20/20 expected)
         run: |
           . /opt/ros/jazzy/setup.sh
           . install/setup.sh
-          python3 -m pytest src/lsep_ros2/test/test_engine.py -v
+          python3 -m pytest src/lsep_ros2/test -v
 
       - name: Headless smoke test (ordered ladder + dwell de-escalation + INTEGRITY)
         run: |

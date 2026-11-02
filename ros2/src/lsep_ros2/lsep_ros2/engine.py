@@ -32,6 +32,13 @@ TTC_THRESHOLDS = {
 
 _BEZIER = [0.4, 0.0, 0.2, 1.0]
 
+# Photosensitivity cap (spec 6.5.5, normative): no light signal may produce
+# more than 2 flashes per second.
+MAX_FLASHES_PER_SECOND = 2.0
+
+# CRITICAL on/off timing in ms: on, off, on, off (spec 6.5.1, catalog 2.1-rc1).
+CRITICAL_SEQUENCE_MS = (100, 150, 100, 650)
+
 SIGNALS = {
     'IDLE': {
         'light': {'pattern': 'breathe', 'frequency_hz': 0.2, 'intensity': 0.2, 'bezier': _BEZIER},
@@ -54,12 +61,16 @@ SIGNALS = {
         'motion': {'action': 'decelerate', 'speed_modifier': 0.4, 'trajectory': 'yield_path'},
     },
     'CRITICAL': {
-        'light': {'pattern': 'strobe', 'frequency_hz': 3.0, 'intensity': 1.0, 'bezier': _BEZIER},
+        # Asymmetric double pulse (spec 6.5.1): 2 flashes per 1.0 s period.
+        # frequency_hz carries the effective flash rate, as in the catalog.
+        'light': {'pattern': 'double_pulse', 'frequency_hz': 2.0, 'intensity': 1.0, 'bezier': _BEZIER,
+                  'sequence_ms': list(CRITICAL_SEQUENCE_MS)},
         'sound': {'type': 'urgent_tone', 'frequency_hz': 880, 'volume_db': 70, 'envelope': 'pulse'},
         'motion': {'action': 'evasive', 'speed_modifier': 0.1, 'trajectory': 'evasive'},
     },
     'THREAT': {
-        'light': {'pattern': 'strobe', 'frequency_hz': 6.0, 'intensity': 1.0, 'bezier': _BEZIER},
+        # Solid maximum red, no flashing (spec 6.6.1).
+        'light': {'pattern': 'steady_max', 'frequency_hz': 0.0, 'intensity': 1.0, 'bezier': _BEZIER},
         'sound': {'type': 'alarm', 'frequency_hz': 1000, 'volume_db': 85, 'envelope': 'continuous'},
         'motion': {'action': 'emergency_stop', 'speed_modifier': 0.0, 'trajectory': 'halt'},
     },
