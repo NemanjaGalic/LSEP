@@ -61,7 +61,7 @@ Read the state name from `/lsep/signal`, not from the color.
 ### Unit tests (no ROS required)
 
 ```bash
-python3 -m pytest test -v   # 17 tests, all green
+python3 -m pytest test -v   # 20 tests, all green
 ```
 
 ## Interface
@@ -106,7 +106,7 @@ needs for orchestrated bring-up.
   (state enum + `state_name`, NaN for undefined physics). JSON-in-String
   on `lsep/state` kept as deprecated mirror behind `publish_json`.
 * **0.1.0** — initial lifecycle node, v2.1-rc1 engine (dwell de-escalation +
-  input watchdog), simulated human, RViz marker, 17 unit tests.
+  input watchdog), simulated human, RViz marker, 20 unit tests.
 
 ## Roadmap
 
